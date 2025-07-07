@@ -20,7 +20,7 @@ class HashMap {
     set(key, value) {
         const index = this.hash(key);
 
-        if (index < 0 || index > this.buckets.lenght) {
+        if (index < 0 || index >= this.buckets.length) {
             throw new Error("The index is not right");
         }
 
@@ -45,21 +45,21 @@ class HashMap {
         }
 
         if (!this.buckets[index]) {
-            return false;
+            return null;
         }
 
         for (let pair of this.buckets[index]) {
             if (pair.key === key) {
-                return true;
+                return pair.value;
             }
         }
-        return false;
+        return null;
     }
 
     remove(key) {
         const index = this.hash(key);
 
-        if (index < 0 || index >= this.buckets.lenght) {
+        if (index < 0 || index >= this.buckets.length) {
             throw new Error("The index is not right");
         }
 
@@ -70,7 +70,7 @@ class HashMap {
         for (let i = 0; i < this.buckets[index].length; i++) {
             const pair = this.buckets[index][i];
             if (pair.key === key) {
-                this.buckets[index][i].splice(i, 1);
+                this.buckets[index].splice(i, 1);
                 return true;
             }
         }
@@ -137,5 +137,4 @@ class HashMap {
         }
         return entriesValue;
     }
-
 }
