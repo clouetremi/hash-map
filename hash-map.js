@@ -3,6 +3,7 @@ class HashMap {
         this.loadFactor = 0.75; // la norme
         this.capacity = 16;
         this.buckets = new Array(this.capacity).fill(null);
+        this.size = 0;
     }
 
     hash(key) {
@@ -16,33 +17,55 @@ class HashMap {
         return hashCode;
     }
 
+    resize() {
+        const oldBuckets = this.buckets;
+        this.capacity *= 2;
+        this.buckets = new Array(this.capacity).fill(null);
+        this.size = 0; // sera recalculée lors de l'insertion
+
+        for (let bucket of oldBuckets) {
+            if (bucket !== null) {
+                for (let pair of bucket) {
+                    this.set(pair.key, pair.value);
+                }
+            }
+        }
+    }
+
 
     set(key, value) {
+
+        
         const index = this.hash(key);
-
-        if (index < 0 || index >= this.buckets.length) {
-            throw new Error("The index is not right");
-        }
-
+        
         if (!this.buckets[index]) {
             this.buckets[index] = [];
         }
-
+        
         for (let pair of this.buckets[index]) {
             if (pair.key === key) {
                 pair.value = value;
                 return;
             }
         }
+
+        if ((this.size + 1) / this.capacity > this.loadFactor) {
+            this.resize();
+        }
+
+        const newIndex = this.hash(key);
+
+        if (!this.buckets[newIndex]) {
+            this.buckets[newIndex] = []; 
+        }
+
+
         this.buckets[index].push({ key, value });
+        this.size++;
     }
 
     get(key) {
         const index = this.hash(key);
-
-        if (index < 0 || index >= this.buckets.length) {
-            throw new Error("Index is not right");
-        }
 
         if (!this.buckets[index]) {
             return null;
@@ -59,10 +82,6 @@ class HashMap {
     remove(key) {
         const index = this.hash(key);
 
-        if (index < 0 || index >= this.buckets.length) {
-            throw new Error("The index is not right");
-        }
-
         if (!this.buckets[index]) {
             return false;
         }
@@ -71,6 +90,7 @@ class HashMap {
             const pair = this.buckets[index][i];
             if (pair.key === key) {
                 this.buckets[index].splice(i, 1);
+                this.size--;
                 return true;
             }
         }
@@ -78,20 +98,13 @@ class HashMap {
     }
 
     length() {
-
-        let count = 0;
-
-        for (let bucket of this.buckets) {
-            if (bucket !== null) {
-                count += bucket.length; // ajoute le nombre de paires key/value
-            }
-        }
-        return count;
+        return this.size;
     };
 
 
     clear() {
         this.buckets = new Array(this.capacity).fill(null);
+        this.size = 0;
     };
 
 
@@ -126,15 +139,52 @@ class HashMap {
 
     entries() {
 
-        let entriesValue = [];
+        let entriesArray = [];
 
         for (let bucket of this.buckets) {
             if (bucket !== null) {
                 for (let pair of bucket) {
-                    entriesValue.push([pair.key, pair.value])
+                    entriesArray.push([pair.key, pair.value])
                 }
             }
         }
-        return entriesValue;
+        return entriesArray;
     }
 }
+
+const test = new HashMap();
+console.log(`Load Factor : ${test.loadFactor}`);
+console.log(`Capacity : ${test.capacity}`); 
+console.log(`Size : ${test.length()}`); 
+
+test.set('apple', 'red')
+test.set('banana', 'yellow')
+test.set('carrot', 'orange')
+test.set('dog', 'brown')
+test.set('elephant', 'gray')
+test.set('frog', 'green')
+test.set('grape', 'purple')
+test.set('hat', 'black')
+test.set('ice cream', 'white')
+test.set('jacket', 'blue')
+test.set('kite', 'pink')
+test.set('lion', 'golden')
+
+console.log(`Size after insertion : ${test.length()}`); 
+console.log(`Capacity after insertion: ${test.capacity}`); 
+console.log(`Current load: : ${(test.length() / test.capacity).toFixed(2)}`);
+
+test.set('apple', 'green');
+test.set('dog', 'white');
+console.log(`Capacity after insertion: ${test.capacity}`); 
+test.set('lion', 'black');
+
+console.log(`Size after overwriting : ${test.length()}`);
+console.log(`Capacity after overwriting : ${test.capacity}`);
+
+console.log(`apple: ${test.get('apple')}`); // doit afficher "green"
+console.log(`dog: ${test.get('dog')}`); // doit afficher "white"
+console.log(`lion: ${test.get('lion')}`); // doit afficher "black"
+
+ test.set('moon', 'silver')
+console.log(`moon: ${test.get("moon")}`);
