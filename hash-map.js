@@ -12,6 +12,7 @@ class HashMap {
         const primeNumber = 31;
 
         for (let i = 0; i < key.length; i++) {
+            // charCodeAt converti un string (ici de key) en nombre
             hashCode = (primeNumber * hashCode + key.charCodeAt(i)) % this.capacity;
         }
         return hashCode;
@@ -19,6 +20,7 @@ class HashMap {
 
     resize() {
         const oldBuckets = this.buckets;
+        // on double this.capacity pour réduire le taux de charge (nombre d'élément par rapport à la capacité totale)
         this.capacity *= 2;
         this.buckets = new Array(this.capacity).fill(null);
         this.size = 0; // sera recalculée lors de l'insertion
@@ -35,13 +37,13 @@ class HashMap {
 
     set(key, value) {
 
-        
+
         const index = this.hash(key);
-        
+
         if (!this.buckets[index]) {
             this.buckets[index] = [];
         }
-        
+
         for (let pair of this.buckets[index]) {
             if (pair.key === key) {
                 pair.value = value;
@@ -56,7 +58,7 @@ class HashMap {
         const newIndex = this.hash(key);
 
         if (!this.buckets[newIndex]) {
-            this.buckets[newIndex] = []; 
+            this.buckets[newIndex] = [];
         }
 
 
@@ -154,8 +156,8 @@ class HashMap {
 
 const test = new HashMap();
 console.log(`Load Factor : ${test.loadFactor}`);
-console.log(`Capacity : ${test.capacity}`); 
-console.log(`Size : ${test.length()}`); 
+console.log(`Capacity : ${test.capacity}`);
+console.log(`Size : ${test.length()}`);
 
 test.set('apple', 'red')
 test.set('banana', 'yellow')
@@ -170,13 +172,15 @@ test.set('jacket', 'blue')
 test.set('kite', 'pink')
 test.set('lion', 'golden')
 
-console.log(`Size after insertion : ${test.length()}`); 
-console.log(`Capacity after insertion: ${test.capacity}`); 
+console.log(`Size after insertion : ${test.length()}`);
+console.log(`Capacity after insertion: ${test.capacity}`);
+// méthode .toFixed(x) sert à formater un nombre en une chaîne de caractère
+// avec exactement x chiffres après la virgule
 console.log(`Current load: : ${(test.length() / test.capacity).toFixed(2)}`);
 
 test.set('apple', 'green');
 test.set('dog', 'white');
-console.log(`Capacity after insertion: ${test.capacity}`); 
+console.log(`Capacity after insertion: ${test.capacity}`);
 test.set('lion', 'black');
 
 console.log(`Size after overwriting : ${test.length()}`);
@@ -186,5 +190,22 @@ console.log(`apple: ${test.get('apple')}`); // doit afficher "green"
 console.log(`dog: ${test.get('dog')}`); // doit afficher "white"
 console.log(`lion: ${test.get('lion')}`); // doit afficher "black"
 
- test.set('moon', 'silver')
+test.set('moon', 'silver')
 console.log(`moon: ${test.get("moon")}`);
+
+test.remove("moon");
+test.remove("lion");
+test.remove("dog");
+test.remove("apple"); 
+console.log(`Size after removing : ${test.length()}`);
+
+console.log(`Keys available: ${test.keys()}`);
+console.log(`Values available: ${test.values()}`);
+console.log(`Entries available: ${test.entries()}`);
+
+test.clear(); 
+console.log(`Entries available after clearing: ${test.entries()}`);
+
+
+
+
