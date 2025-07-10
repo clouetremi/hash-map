@@ -81,6 +81,22 @@ class HashMap {
         return null;
     }
 
+    has(key) {
+
+        const index = this.hash(key);
+
+        if (!this.buckets[index]) {
+            return false;
+        }
+
+        for (let pair of this.buckets[index]) {
+            if (pair.key === key) {
+                return true;
+            }
+        }
+        return false; 
+    }
+
     remove(key) {
         const index = this.hash(key);
 
